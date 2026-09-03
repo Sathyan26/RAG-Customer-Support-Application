@@ -72,7 +72,9 @@ def clean() -> None:
     _setup()
     settings = get_settings()
     with session_scope() as session:
-        stats = run_cleaning(session, chunk_size=settings.chunk_size, overlap=settings.chunk_overlap)
+        stats = run_cleaning(
+            session, chunk_size=settings.chunk_size, overlap=settings.chunk_overlap
+        )
     console.print(stats)
 
 
@@ -106,7 +108,11 @@ def pipeline() -> None:
 
     with session_scope() as session:
         stats = run_ingest_clean_embed(
-            session, source, provider, chunk_size=settings.chunk_size, overlap=settings.chunk_overlap
+            session,
+            source,
+            provider,
+            chunk_size=settings.chunk_size,
+            overlap=settings.chunk_overlap,
         )
 
     table = Table(title="Pipeline results")
@@ -120,7 +126,9 @@ def pipeline() -> None:
         f"{stats.cleaning.low_quality_rejected} low-quality rejected, "
         f"{stats.cleaning.chunks_created} chunks",
     )
-    table.add_row("Embedding", f"{stats.embedding.chunks_embedded} chunks ({stats.embedding.provider})")
+    table.add_row(
+        "Embedding", f"{stats.embedding.chunks_embedded} chunks ({stats.embedding.provider})"
+    )
     console.print(table)
 
 
@@ -179,7 +187,10 @@ def chat(
         if result.sources:
             console.print("[dim]Sources:[/dim]")
             for s in result.sources:
-                console.print(f"[dim]  [{s.rank}] {s.category} · {s.title} (similarity={s.similarity})[/dim]")
+                console.print(
+                    f"[dim]  [{s.rank}] {s.category} · {s.title} "
+                    f"(similarity={s.similarity})[/dim]"
+                )
         console.print()
 
 

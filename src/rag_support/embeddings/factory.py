@@ -45,7 +45,9 @@ def build_local_embedder(settings: Settings) -> EmbeddingProvider:
             "EMBEDDING_PROVIDER=local requires the local-ml extra: "
             "pip install -e '.[local-ml]'"
         )
-    return LocalEmbedder(model_name=settings.local_embedding_model, dim=settings.local_embedding_dim)
+    return LocalEmbedder(
+        model_name=settings.local_embedding_model, dim=settings.local_embedding_dim
+    )
 
 
 def build_offline_embedder(settings: Settings) -> EmbeddingProvider:

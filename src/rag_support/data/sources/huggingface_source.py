@@ -40,7 +40,9 @@ class HuggingFaceSource(DataSource):
                 "Install it with: pip install -e '.[datasets]'"
             ) from exc
 
-        logger.info("Streaming %s (%s split) from the Hugging Face Hub", self.dataset_name, self.split)
+        logger.info(
+            "Streaming %s (%s split) from the Hugging Face Hub", self.dataset_name, self.split
+        )
         try:
             dataset = load_dataset(self.dataset_name, split=self.split, streaming=True)
         except Exception as exc:

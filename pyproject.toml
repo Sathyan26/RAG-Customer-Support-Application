@@ -56,6 +56,21 @@ target-version = "py311"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+# UP042: str+Enum (not enum.StrEnum) is deliberate here -- pydantic-settings'
+# env-var parsing and str(member) behavior for these config enums is better
+# understood with the plain mixin than with StrEnum's format-spec quirks.
+ignore = ["UP042"]
+
+[tool.ruff.lint.per-file-ignores]
+# Alembic-generated migrations follow autogenerate's own formatting (long,
+# single-line column definitions) -- reformatting them by hand just makes
+# the next `alembic revision --autogenerate` diff noisier.
+"src/rag_support/storage/migrations/versions/*" = ["E501"]
+# FastAPI's dependency injection is *designed* around `Depends(...)` as an
+# argument default (it's how the framework recognizes what to inject) --
+# this is the documented, idiomatic pattern, not the footgun B008 exists to
+# catch elsewhere.
+"src/rag_support/api/routers/*" = ["B008"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

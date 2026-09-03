@@ -78,6 +78,12 @@ def mark_document_cleaned(
     doc.clean_text = clean_text
     doc.content_hash = content_hash
     doc.status = "cleaned"
+    # The session is configured with autoflush=False (see storage/db.py), so
+    # without an explicit flush here, content_hash_exists() run against this
+    # same session for the *next* document wouldn't see this one yet -- and
+    # cross-document duplicate detection within one cleaning run depends on
+    # exactly that visibility.
+    session.flush()
 
 
 def mark_document_rejected(session: Session, document_id: int, reason: str) -> None:
@@ -85,6 +91,7 @@ def mark_document_rejected(session: Session, document_id: int, reason: str) -> N
     if doc is None:
         raise ValueError(f"Document {document_id} not found")
     doc.status = f"rejected_{reason}"
+    session.flush()
 
 
 def content_hash_exists(session: Session, content_hash: str) -> bool:

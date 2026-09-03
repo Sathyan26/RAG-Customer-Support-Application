@@ -30,8 +30,12 @@ def normalize_unicode(text: str) -> str:
 
 
 def collapse_whitespace(text: str) -> str:
-    """Collapse runs of spaces/tabs and excess blank lines, trim the ends."""
-    text = _WHITESPACE_RE.sub(" ", text)
+    """Collapse runs of spaces/tabs, strip trailing/leading whitespace on
+    each line (not just mid-line runs -- a line ending in "  \\n" and one
+    ending in "\\n" must normalize identically for dedup hashing to work),
+    and collapse excess blank lines."""
+    lines = [_WHITESPACE_RE.sub(" ", line).strip() for line in text.split("\n")]
+    text = "\n".join(lines)
     text = _BLANK_LINES_RE.sub("\n\n", text)
     return text.strip()
 
