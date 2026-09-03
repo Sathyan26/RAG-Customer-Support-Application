@@ -25,6 +25,40 @@ console = Console()
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 
+def _locate_alembic_ini() -> Path:
+    """Find alembic.ini regardless of how the package was installed.
+
+    ``_PROJECT_ROOT`` (derived from ``__file__``) only points at the real
+    project root for an *editable* install (``pip install -e .``), where
+    ``rag_support`` keeps living under ``<repo>/src/rag_support``. A normal
+    install -- which is what the Docker image uses -- copies the package
+    into site-packages, so ``__file__`` resolves somewhere under
+    ``.../site-packages/rag_support/cli.py`` instead, and the old
+    ``_PROJECT_ROOT / "alembic.ini"`` computation silently pointed at a
+    path that doesn't exist. Alembic's ``Config`` doesn't error on a
+    missing ini file at construction time -- it just ends up with no
+    ``script_location``, which surfaces later as the much more confusing
+    ``CommandError: No 'script_location' key found in configuration.``
+
+    The container always runs with its working directory at the project
+    root (see the Dockerfile's ``WORKDIR /app``, which is also where
+    ``alembic.ini`` is copied to), and every documented local-dev flow
+    also runs `rag-support` from the project root, so checking the current
+    working directory first covers both cases; the ``__file__``-derived
+    path remains as a fallback for anyone invoking this from elsewhere in
+    an editable-install checkout.
+    """
+    candidates = [Path.cwd() / "alembic.ini", _PROJECT_ROOT / "alembic.ini"]
+    for candidate in candidates:
+        if candidate.is_file():
+            return candidate
+    raise FileNotFoundError(
+        "Could not find alembic.ini (looked in: "
+        f"{', '.join(str(c) for c in candidates)}). Run `rag-support init-db` "
+        "from the project root, i.e. the directory containing alembic.ini."
+    )
+
+
 def _setup() -> None:
     settings = get_settings()
     configure_logging(settings.log_level)
@@ -43,7 +77,7 @@ def init_db() -> None:
     ensure_pgvector_extension()
 
     console.print("[bold]Running Alembic migrations (upgrade head)...[/bold]")
-    alembic_cfg = Config(str(_PROJECT_ROOT / "alembic.ini"))
+    alembic_cfg = Config(str(_locate_alembic_ini()))
     command.upgrade(alembic_cfg, "head")
     console.print("[green]Database is up to date.[/green]")
 
