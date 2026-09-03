@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: rag
+          POSTGRES_PASSWORD: rag
+          POSTGRES_DB: rag_support_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U rag -d rag_support_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://rag:rag@localhost:5432/rag_support_test
+      EMBEDDING_PROVIDER: offline
+      LLM_PROVIDER: offline
+      DATA_SOURCE: sample
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install package (dev + openai + datasets extras)
+        run: pip install -e ".[dev,openai,datasets]"
+
+      - name: Lint
+        run: ruff check src tests
+
+      # No separate "wait for Postgres" step: the `postgres` service above
+      # declares a healthcheck, and GitHub Actions blocks job steps from
+      # starting until every service with one reports healthy.
+      - name: Run test suite
+        run: pytest -v
