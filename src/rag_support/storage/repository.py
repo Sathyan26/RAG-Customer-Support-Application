@@ -153,28 +153,55 @@ def set_chunk_embedding(
     chunk.embedding_provider = provider
 
 
+@dataclass(slots=True)
+class VectorSearchHit:
+    chunk: DocumentChunk
+    distance: float
+    document_category: str | None
+    document_title: str | None
+    document_external_id: str | None
+
+
 def vector_search(
     session: Session,
     query_embedding: list[float],
     top_k: int = 4,
     category: str | None = None,
-) -> list[tuple[DocumentChunk, float]]:
+) -> list[VectorSearchHit]:
     """Nearest-neighbour search over chunk embeddings using cosine distance.
 
-    Returns ``(chunk, distance)`` pairs sorted by ascending distance (i.e.
-    most similar first). ``distance`` is pgvector's cosine distance
-    (0 = identical direction, 2 = opposite), which the RAG pipeline turns
-    into a 0-1 similarity score for display.
+    Results are sorted by ascending distance (most similar first).
+    ``distance`` is pgvector's cosine distance (0 = identical direction, up
+    to 2 = opposite); the RAG pipeline turns it into a similarity score for
+    display. Always joins Document so category/title/source are available
+    without a lazy-load per hit (avoids an N+1 query for a handful of rows).
     """
-    stmt = select(
-        DocumentChunk, DocumentChunk.embedding.cosine_distance(query_embedding).label("distance")
-    ).where(DocumentChunk.embedding.is_not(None))
+    stmt = (
+        select(
+            DocumentChunk,
+            DocumentChunk.embedding.cosine_distance(query_embedding).label("distance"),
+            Document.category,
+            Document.title,
+            Document.external_id,
+        )
+        .join(Document, DocumentChunk.document_id == Document.id)
+        .where(DocumentChunk.embedding.is_not(None))
+    )
 
     if category:
-        stmt = stmt.join(Document).where(Document.category == category)
+        stmt = stmt.where(Document.category == category)
 
     stmt = stmt.order_by("distance").limit(top_k)
-    return [(row[0], row[1]) for row in session.execute(stmt).all()]
+    return [
+        VectorSearchHit(
+            chunk=row[0],
+            distance=row[1],
+            document_category=row[2],
+            document_title=row[3],
+            document_external_id=row[4],
+        )
+        for row in session.execute(stmt).all()
+    ]
 
 
 def create_conversation(session: Session) -> Conversation:
