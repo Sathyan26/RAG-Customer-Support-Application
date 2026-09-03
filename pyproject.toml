@@ -1,0 +1,63 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rag-support"
+version = "0.1.0"
+description = "A production-shaped Retrieval-Augmented Generation customer support assistant: ingestion, cleaning, storage, retrieval, and generation in one cohesive service."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Seth" }]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.3.0",
+    "sqlalchemy>=2.0.30",
+    "psycopg[binary]>=3.1.19",
+    "pgvector>=0.2.5",
+    "alembic>=1.13.1",
+    "typer>=0.12.3",
+    "rich>=13.7.1",
+    "tenacity>=8.3.0",
+    "httpx>=0.27.0",
+    "numpy>=1.26.4",
+    "scikit-learn>=1.5.0",
+    "beautifulsoup4>=4.12.3",
+    "python-dotenv>=1.0.1",
+]
+
+[project.optional-dependencies]
+openai = ["openai>=1.30.0"]
+local-ml = ["sentence-transformers>=3.0.0", "transformers>=4.42.0", "torch>=2.3.0"]
+datasets = ["datasets>=2.20.0"]
+frontend = ["streamlit>=1.36.0"]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-asyncio>=0.23.7",
+    "pytest-mock>=3.14.0",
+    "ruff>=0.5.0",
+    "respx>=0.21.1",
+]
+all = ["rag-support[openai,local-ml,datasets,frontend,dev]"]
+
+[project.scripts]
+rag-support = "rag_support.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rag_support"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
