@@ -1,0 +1,47 @@
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: rag
+      POSTGRES_PASSWORD: rag
+      POSTGRES_DB: rag_support
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rag -d rag_support"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://rag:rag@db:5432/rag_support
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-offline}
+      LLM_PROVIDER: ${LLM_PROVIDER:-offline}
+      DATA_SOURCE: ${DATA_SOURCE:-sample}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    # Run migrations before serving so a fresh `docker compose up` on an
+    # empty volume just works, with no separate manual step.
+    command: ["sh", "-c", "rag-support init-db && rag-support serve"]
+
+  frontend:
+    build: .
+    depends_on:
+      - api
+    environment:
+      API_BASE_URL: http://api:8000
+    ports:
+      - "8501:8501"
+    command: ["streamlit", "run", "frontend/streamlit_app.py", "--server.address=0.0.0.0"]
+
+volumes:
+  pgdata:
