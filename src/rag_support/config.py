@@ -65,6 +65,15 @@ class Settings(BaseSettings):
     # so the pgvector column type never has to change with the active tier.
     offline_embedding_dim: int = 512
 
+    # The pgvector column is created with a fixed width (Postgres/pgvector
+    # requires this). It must match whatever embedding_provider is actually
+    # active in your deployment: 1536 for openai/text-embedding-3-small,
+    # 384 for the local MiniLM model, 512 for the offline hashing tier
+    # (the zero-config default). Changing providers to one with a different
+    # width requires an Alembic migration + re-embedding the corpus -- see
+    # docs/architecture.md for the trade-off this makes.
+    vector_dim: int = 512
+
     # --- Data source ----------------------------------------------------
     data_source: DataSourceMode = DataSourceMode.SAMPLE
 
