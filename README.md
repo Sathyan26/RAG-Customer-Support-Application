@@ -7,7 +7,7 @@ notebooks. Data ingestion, cleaning, vector storage, retrieval, and
 generation all live behind a single pipeline, a single FastAPI service, and
 a single CLI.
 
-[![CI](https://github.com/YOUR_GITHUB_USERNAME/rag-customer-support/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_GITHUB_USERNAME/rag-customer-support/actions/workflows/ci.yml)
+[![CI](https://github.com/Sathyan26/RAG-Customer-Support-Application/actions/workflows/ci.yml/badge.svg)](https://github.com/Sathyan26/RAG-Customer-Support-Application/actions/workflows/ci.yml)
 ![Python](https://img.shields.io/badge/python-3.11%2B-blue)
 ![License](https://img.shields.io/badge/license-MIT-informational)
 
@@ -87,8 +87,8 @@ rationale, database schema, and the trade-offs made along the way.
 ### Option A: Docker Compose (recommended)
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/rag-customer-support.git
-cd rag-customer-support
+git clone https://github.com/Sathyan26/RAG-Customer-Support-Application.git
+cd RAG-Customer-Support-Application
 docker compose up --build
 ```
 
