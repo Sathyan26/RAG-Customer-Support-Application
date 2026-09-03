@@ -560,7 +560,10 @@ def _messify(text: str, rng: random.Random) -> str:
         lambda t: t.replace(" ", "  ", 2),
         lambda t: t.upper() if rng.random() < 0.3 else t.lower(),
         lambda t: f"  {t}  \n\n",
-        lambda t: t.replace("'", "&#39;").replace("&", "&amp;"),
+        # Escape & first, then quotes -- doing it in the other order would
+        # re-escape the "&" just introduced by the quote replacement and
+        # produce invalid double-escaped entities like "&amp;#39;".
+        lambda t: t.replace("&", "&amp;").replace("'", "&#39;"),
     ]
     n = rng.randint(1, 2)
     for fn in rng.sample(choices, n):
