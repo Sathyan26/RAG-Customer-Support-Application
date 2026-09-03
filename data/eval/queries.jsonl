@@ -1,0 +1,36 @@
+{"query": "What's the signup process like, do I need a card to start?", "expected_category": "ACCOUNT", "expected_intent": "create_account"}
+{"query": "I can't remember my login password, help!", "expected_category": "ACCOUNT", "expected_intent": "reset_password"}
+{"query": "I got married and need to change my name on file.", "expected_category": "ACCOUNT", "expected_intent": "update_profile"}
+{"query": "Please erase my account and everything in it for good.", "expected_category": "ACCOUNT", "expected_intent": "delete_account"}
+{"query": "How do I set up an authenticator app for extra login security?", "expected_category": "ACCOUNT", "expected_intent": "two_factor_setup"}
+{"query": "Where can I grab a copy of my last invoice as a PDF?", "expected_category": "BILLING", "expected_intent": "view_invoice"}
+{"query": "My credit card on file expired, how do I update it?", "expected_category": "BILLING", "expected_intent": "update_payment_method"}
+{"query": "I see a charge I don't recognize on my statement.", "expected_category": "BILLING", "expected_intent": "dispute_charge"}
+{"query": "I no longer want to be billed, how do I stop it?", "expected_category": "BILLING", "expected_intent": "cancel_subscription"}
+{"query": "Where do I type in a discount code I was given?", "expected_category": "BILLING", "expected_intent": "apply_coupon"}
+{"query": "My package hasn't shown up, how can I see where it is?", "expected_category": "ORDERS", "expected_intent": "track_order"}
+{"query": "I just placed an order by accident, can I stop it?", "expected_category": "ORDERS", "expected_intent": "cancel_order"}
+{"query": "I need to fix the address on an order I just placed.", "expected_category": "ORDERS", "expected_intent": "modify_order"}
+{"query": "The delivery window came and went with nothing showing up.", "expected_category": "ORDERS", "expected_intent": "delayed_order"}
+{"query": "Do I have to pay extra to get things shipped to me?", "expected_category": "SHIPPING", "expected_intent": "shipping_costs"}
+{"query": "I typo'd my street address, can it still be fixed?", "expected_category": "SHIPPING", "expected_intent": "change_shipping_address"}
+{"query": "Will you ship hardware to a customer outside the US?", "expected_category": "SHIPPING", "expected_intent": "international_shipping"}
+{"query": "How long of a window do I have to send something back?", "expected_category": "RETURNS", "expected_intent": "return_policy"}
+{"query": "I'd like to send this item back, what do I do first?", "expected_category": "RETURNS", "expected_intent": "start_return"}
+{"query": "It's been days since my return shipped back, no refund yet.", "expected_category": "RETURNS", "expected_intent": "refund_status"}
+{"query": "This arrived broken, can I get a working one instead of money back?", "expected_category": "RETURNS", "expected_intent": "exchange_item"}
+{"query": "My password is right but it keeps saying my login failed.", "expected_category": "TECHNICAL", "expected_intent": "login_issue"}
+{"query": "The desktop app quits the second I open it.", "expected_category": "TECHNICAL", "expected_intent": "app_crash"}
+{"query": "What I edited on my laptop isn't showing up on my phone.", "expected_category": "TECHNICAL", "expected_intent": "sync_issue"}
+{"query": "My API calls started failing with a rate limit error.", "expected_category": "TECHNICAL", "expected_intent": "api_error"}
+{"query": "Where can I request a new feature or vote on one?", "expected_category": "TECHNICAL", "expected_intent": "feature_request"}
+{"query": "What does the Pro tier get me that Free doesn't?", "expected_category": "SUBSCRIPTION", "expected_intent": "upgrade_plan"}
+{"query": "I'd like to move down from Team to a cheaper tier.", "expected_category": "SUBSCRIPTION", "expected_intent": "downgrade_plan"}
+{"query": "Is there a way to freeze billing while I'm not using it?", "expected_category": "SUBSCRIPTION", "expected_intent": "pause_subscription"}
+{"query": "When exactly will my plan renew and get charged again?", "expected_category": "SUBSCRIPTION", "expected_intent": "renewal_info"}
+{"query": "I'd like a full copy of everything you have stored on me.", "expected_category": "PRIVACY", "expected_intent": "data_export"}
+{"query": "Please wipe my personal data, not just close the account.", "expected_category": "PRIVACY", "expected_intent": "data_deletion"}
+{"query": "As someone in the EU, how do I file a data access request?", "expected_category": "PRIVACY", "expected_intent": "gdpr_request"}
+{"query": "Is there any way to talk to a real person on the phone?", "expected_category": "CONTACT", "expected_intent": "contact_support"}
+{"query": "Are you available on the weekend if I need help?", "expected_category": "CONTACT", "expected_intent": "business_hours"}
+{"query": "Nobody's fixed my issue, how do I get a manager involved?", "expected_category": "CONTACT", "expected_intent": "escalate_issue"}
