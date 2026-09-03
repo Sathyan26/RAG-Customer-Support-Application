@@ -69,12 +69,35 @@ def count_documents(session: Session) -> int:
     return session.scalar(select(func.count()).select_from(Document)) or 0
 
 
-def mark_document_cleaned(session: Session, document_id: int, clean_text: str) -> None:
+def mark_document_cleaned(
+    session: Session, document_id: int, clean_text: str, content_hash: str
+) -> None:
     doc = session.get(Document, document_id)
     if doc is None:
         raise ValueError(f"Document {document_id} not found")
     doc.clean_text = clean_text
+    doc.content_hash = content_hash
     doc.status = "cleaned"
+
+
+def mark_document_rejected(session: Session, document_id: int, reason: str) -> None:
+    doc = session.get(Document, document_id)
+    if doc is None:
+        raise ValueError(f"Document {document_id} not found")
+    doc.status = f"rejected_{reason}"
+
+
+def content_hash_exists(session: Session, content_hash: str) -> bool:
+    """True if a *cleaned* document with this hash already exists.
+
+    Checked against persisted state (not just the current run's in-memory
+    set), so re-running ingestion + cleaning on top of an existing corpus
+    still catches cross-run duplicates.
+    """
+    stmt = select(Document.id).where(
+        Document.content_hash == content_hash, Document.status == "cleaned"
+    )
+    return session.scalars(stmt).first() is not None
 
 
 def replace_chunks(

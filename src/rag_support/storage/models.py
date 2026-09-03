@@ -52,6 +52,7 @@ class Document(Base):
     title: Mapped[str | None] = mapped_column(String(512))
     raw_text: Mapped[str] = mapped_column(Text)
     clean_text: Mapped[str | None] = mapped_column(Text, nullable=True)
+    content_hash: Mapped[str | None] = mapped_column(String(64), index=True, nullable=True)
     doc_metadata: Mapped[dict] = mapped_column(JSON, default=dict)
     status: Mapped[str] = mapped_column(String(32), default="ingested")
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
